@@ -9,7 +9,7 @@ project.ext.modID = "valid.moremobs" // The unique id of your mod. Must be all l
 project.ext.modName = "More Mobs" // The display name of your mod.
 project.ext.modVersion = "0.1" // Your current builds version. Must follow the xx.xx... format.
 project.ext.gameVersion = "0.29.0" // The target game version.
-project.ext.modDescription = "More Mobs and stuff" // Short description of what your mod is.
+project.ext.modDescription = "More Mobs" // Short description of what your mod is.
 project.ext.author = "Valid" // Your name
 
 /**

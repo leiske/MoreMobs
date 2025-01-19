@@ -6,6 +6,8 @@ This mod adds more mobs to the game. It is a work in progress.
 
 Clone the repo. Configure the Makefile to point to your necesse install using the linux mount path
 
+Run `cp .env.dist .env` and update the path to your necesse install
+
 Run `make init` to get your mods folder created.
 
 Go to steam and update your launch arguments to be '-dev -mod mods'

@@ -4,9 +4,11 @@ services:
     user: 1000:1000
     environment:
       - GRADLE_USER_HOME=/home/gradle/.gradle
+      # I don't actually know what I'm doing with this
       - GRADLE_OPTS=-Dorg.gradle.daemon=false
     volumes:
       - .:/home/gradle/project
       - ./gradle:/home/gradle/.gradle
-      - /mnt/e/SteamLibrary/steamapps/common/Necesse:/home/gradle/Necesse
+      # Ensure your Necesse install is at /home/gradle/Necesse
+      # The Makefile handles this for you by reading your .env
     working_dir: /home/gradle/project

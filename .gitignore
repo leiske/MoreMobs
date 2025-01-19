@@ -14,3 +14,6 @@ gradle
 # Project specific
 steam_appid.txt
 latest-crash.log
+
+# per-developer game path and stuff like that
+.env
