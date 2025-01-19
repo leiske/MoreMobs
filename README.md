@@ -4,7 +4,7 @@ This mod adds more mobs to the game. It is a work in progress.
 
 # Getting Started
 
-Clone the repo. Configure the Makefile to point to your necesse install using the linux mount path
+Clone the repo. Configure the Makefile to point to your necesse install using the wsl mount path
 
 Run `cp .env.dist .env` and update the path to your necesse install
 
