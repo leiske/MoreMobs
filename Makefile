@@ -9,7 +9,7 @@ init:
 shell:
 	docker compose run --remove-orphans --rm $(CONTAINER_NAME) /bin/bash
 
-build: init
+build:
 	docker compose run --remove-orphans --rm $(CONTAINER_NAME) ./gradlew buildModJar
 	cp build/jar/* $(GAME_PATH)/mods
 
