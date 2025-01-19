@@ -1,4 +1,4 @@
-package examplemod.examples;
+package moremobs.examples;
 
 import necesse.engine.network.NetworkPacket;
 import necesse.engine.network.Packet;

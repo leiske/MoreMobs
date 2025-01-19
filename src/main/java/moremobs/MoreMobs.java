@@ -1,6 +1,6 @@
-package examplemod;
+package moremobs;
 
-import examplemod.examples.*;
+import moremobs.examples.*;
 import necesse.engine.commands.CommandsManager;
 import necesse.engine.modLoader.annotations.ModEntry;
 import necesse.engine.registries.*;
@@ -11,7 +11,7 @@ import necesse.inventory.recipe.Recipes;
 import necesse.level.maps.biomes.Biome;
 
 @ModEntry
-public class ExampleMod {
+public class MoreMobs {
 
     public void init() {
         System.out.println("Hello world from my example mod!");

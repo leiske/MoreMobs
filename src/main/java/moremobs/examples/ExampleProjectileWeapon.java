@@ -1,4 +1,4 @@
-package examplemod.examples;
+package moremobs.examples;
 
 import necesse.engine.localization.Localization;
 import necesse.engine.network.PacketReader;

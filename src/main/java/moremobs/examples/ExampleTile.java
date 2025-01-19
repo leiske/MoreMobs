@@ -1,4 +1,4 @@
-package examplemod.examples;
+package moremobs.examples;
 
 import necesse.engine.util.GameRandom;
 import necesse.gfx.gameTexture.GameTexture;

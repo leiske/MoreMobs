@@ -1,4 +1,4 @@
-package examplemod.examples;
+package moremobs.examples;
 
 import necesse.engine.commands.CmdParameter;
 import necesse.engine.commands.CommandLog;
