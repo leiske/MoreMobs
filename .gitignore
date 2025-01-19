@@ -8,6 +8,9 @@ gen
 build
 .gradle
 
+# gradle cache used in containers
+gradle
+
 # Project specific
 steam_appid.txt
 latest-crash.log

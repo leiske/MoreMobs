@@ -1,0 +1,12 @@
+services:
+  necesse-mod-dev:
+    image: gradle:7.3.0
+    user: 1000:1000
+    environment:
+      - GRADLE_USER_HOME=/home/gradle/.gradle
+      - GRADLE_OPTS=-Dorg.gradle.daemon=false
+    volumes:
+      - .:/home/gradle/project
+      - ./gradle:/home/gradle/.gradle
+      - /mnt/e/SteamLibrary/steamapps/common/Necesse:/home/gradle/Necesse
+    working_dir: /home/gradle/project
