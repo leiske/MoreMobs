@@ -3,17 +3,21 @@ exampletile=Example Tile
 
 [object]
 exampleobject=Example Object
+spidermountcobweb=Cobweb
 
 [item]
 exampleitem=Example Item
 examplesword=Example Sword
 examplestaff=Example Staff
+icesword=Ice Sword
+spidermountitem=Wiggling Spider Leg
 
 [itemtooltip]
 examplestafftip=Shoots a homing, piercing projectile
 
 [mob]
 examplemob=Example Mob
+spidermountmob=Tamed Spider
 
 [buff]
 examplebuff=Example Buff

@@ -4,9 +4,11 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.util.List;
 import java.util.stream.Stream;
+import necesse.engine.GlobalData;
 import necesse.engine.gameLoop.tickManager.TickManager;
 import necesse.engine.modifiers.ModifierValue;
 import necesse.engine.registries.MobRegistry;
+import necesse.engine.registries.ObjectRegistry;
 import necesse.engine.util.GameUtils;
 import necesse.engine.util.GameMath;
 import necesse.engine.util.GameRandom;
@@ -28,6 +30,7 @@ import necesse.gfx.drawOptions.texture.TextureDrawOptionsEnd;
 import necesse.gfx.drawables.OrderableDrawables;
 import necesse.gfx.gameTexture.GameTexture;
 import necesse.level.maps.Level;
+import necesse.level.gameObject.GameObject;
 import necesse.level.maps.light.GameLight;
 import necesse.entity.mobs.summon.summonFollowingMob.mountFollowingMob.MountFollowingMob;
 
@@ -37,7 +40,9 @@ public class SpiderMountMob extends MountFollowingMob {
   private int width = 96;
   private int height = 96;
 
-  private float defaultSpeed = 100.0F;
+  private float defaultSpeed = 70.0F;
+
+  public static double webGrowChance = GameMath.getAverageSuccessRuns(500.0D);
 
   public SpiderMountMob() {
     super(50);
@@ -54,20 +59,35 @@ public class SpiderMountMob extends MountFollowingMob {
     this.swimMaskOffset = -8;
     this.swimSinkOffset = 0;
   }
+
+  public void init() {
+    super.init();
+    this.ai = new BehaviourTreeAI((Mob)this, (AINode)new PlayerFollowerAINode(480, 64));
+  }
   
-  public void addDrawables(List<MobDrawable> list, OrderableDrawables tileList, OrderableDrawables topList, Level level, int x, int y, TickManager tickManager, GameCamera camera, PlayerMob perspective) {
+  public void addDrawables(
+    List<MobDrawable> list,
+    OrderableDrawables tileList,
+    OrderableDrawables topList,
+    Level level,
+    int x,
+    int y,
+    TickManager tickManager,
+    GameCamera camera,
+    PlayerMob perspective
+  ) {
     super.addDrawables(list, tileList, topList, level, x, y, tickManager, camera, perspective);
 
     TextureDrawOptionsEnd front;
 
-    int drawX = camera.getDrawX(x) - 48;
-    int drawY = camera.getDrawY(y) - 48;
+    int drawX = camera.getDrawX(x) - width/2;
+    int drawY = camera.getDrawY(y) - height/2;
     int dir = getDir();
 
     GameLight light = level.getLightLevel(x / 32, y / 32);
     Point sprite = getAnimSprite(x, y, dir);
 
-    int animationTime = 1000;
+    int animationTime = 1500;
 
     long time = level.getTime() + (new GameRandom(getUniqueID())).nextInt(animationTime);
 
@@ -105,9 +125,26 @@ public class SpiderMountMob extends MountFollowingMob {
     return -4;
   }
 
-  public void serverTick() {
-    super.serverTick();
-    System.out.println("server tick");
+  public void tickMovement(float delta) {
+    super.tickMovement(delta);
+
+    Level level = getLevel();
+
+    GameCamera camera = GlobalData.getCurrentState().getCamera();
+    int x = this.getTileX();
+    int y = this.getTileY();
+
+    if (!level.isServer())
+      return; 
+
+    if (GameRandom.globalRandom.getChance(webGrowChance)) {
+      GameObject cobweb = ObjectRegistry.getObject(ObjectRegistry.getObjectID("spidermountcobweb"));
+      String canPlace = cobweb.canPlace(level, x, y, 0, false);
+      if (canPlace == null) {
+        cobweb.placeObject(level, x, y, 0, false);
+        level.sendObjectUpdatePacket(x, y);
+      } 
+    } 
   }
 
   public MaskShaderOptions getRiderMaskOptions(int x, int y) {
@@ -138,8 +175,6 @@ public class SpiderMountMob extends MountFollowingMob {
     if (dir == 0) // up
       maskYOffset += 4;
 
-    System.out.println("Rider Mask: " + " x: " + maskXOffset + " y: " + maskYOffset + " Dir: " + dir);
-
     return new MaskShaderOptions(
       riderMask,
       spriteOffset.x + drawXOffset,
@@ -159,17 +194,21 @@ public class SpiderMountMob extends MountFollowingMob {
 
     int particleCount = 40;
     for (int i = 0; i < particleCount; i++)
-      getLevel().entityManager.addParticle(this.x + 
-          (float)(GameRandom.globalRandom.nextGaussian() * 8.0D), this.y + 16.0F + 
-          (float)(GameRandom.globalRandom.nextGaussian() * 8.0D), Particle.GType.IMPORTANT_COSMETIC)
-        
-        .sprite(GameResources.mapleLeafParticles.sprite(0, 0, 32))
-        .lifeTime(750)
-        .fadesAlphaTime(100, 250)
-        .movesFriction(16.0F * (float)GameRandom.globalRandom.nextGaussian(), 5.0F * 
-          (float)GameRandom.globalRandom.nextGaussian(), 1.0F)
-        .sizeFades(14, 18)
-        .heightMoves(20.0F, 64.0F); 
+      getLevel().entityManager.addParticle(
+        this.x + (float)(GameRandom.globalRandom.nextGaussian() * 16.0D),
+        this.y + 16.0F + (float)(GameRandom.globalRandom.nextGaussian() * 16.0D),
+        Particle.GType.IMPORTANT_COSMETIC
+      )
+      .sprite(GameResources.mapleLeafParticles.sprite(0, 0, 32))
+      .lifeTime(750)
+      .fadesAlphaTime(100, 250)
+      .movesFriction(
+        16.0F * (float)GameRandom.globalRandom.nextGaussian(),
+        5.0F * (float)GameRandom.globalRandom.nextGaussian(),
+        1.0F
+      )
+      .sizeFades(14, 18)
+      .heightMoves(20.0F, 64.0F); 
   }
 
   @Override

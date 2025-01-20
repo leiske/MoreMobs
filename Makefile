@@ -13,6 +13,9 @@ DECOMPILER_VERSION = 1.6.6
 # We start the java debugger for Necesse on the Windows host, so we need to reach out to the host IP which corresponds to your machines hostname + '.local'
 HOST_IP=$(shell dig +short $(shell hostname) | head -n 1)
 
+get-ip:
+	@echo "HOST_IP: $(HOST_IP)"
+
 # first time setup and stuff
 init:
 	mkdir -p $(GAME_PATH)/mods
@@ -29,6 +32,9 @@ decompiler: install-decompiler
 	@(cd $(GAME_PATH); ./jre/bin/java.exe -jar jd-gui-$(DECOMPILER_VERSION).jar Necesse.jar &)
 
 build: clean
+	# if the container is already runnign then use exec but if it isnt then use the container compose ocmmand
+	# if docker ps | grep $(CONTAINER_NAME) > /dev/null; then docker exec -it $(CONTAINER_NAME) ./gradlew buildModJar; else $(DEV_CONTAINER_COMPOSE) ./gradlew buildModJar; fi
+
 	$(DEV_CONTAINER_COMPOSE) ./gradlew buildModJar
 	@cp build/jar/* $(GAME_PATH)/mods
 	@echo "Mod built and copied to $(GAME_PATH)/mods"
@@ -66,6 +72,9 @@ attach-debug:
 hot-reload:
 	@docker compose exec $(CONTAINER_NAME) ./gradlew buildModJar
 	@./hotreload.sh $(HOST_IP)
+
+start-dev-container:
+	@docker compose run --rm --name $(CONTAINER_NAME) -v $(GAME_PATH):/home/gradle/Necesse $(CONTAINER_NAME) /bin/bash
 
 logs:
 	@test -f $(LOG_PATH)/latest-log.txt || echo "No logs found or LOG_PATH not set in .env"

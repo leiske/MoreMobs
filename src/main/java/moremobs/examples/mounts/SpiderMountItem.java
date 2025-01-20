@@ -17,8 +17,7 @@ public class SpiderMountItem extends MountItem {
   
   public ListGameTooltips getTooltips(InventoryItem item, PlayerMob perspective, GameBlackboard blackboard) {
     ListGameTooltips tooltips = super.getTooltips(item, perspective, blackboard);
-    tooltips.add("Spider Mount");
-    tooltips.add("Spider Mount again");
+    tooltips.add("Weird and creepy, but gets you around quickly.");
     return tooltips;
   }
 }

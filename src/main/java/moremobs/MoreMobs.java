@@ -1,10 +1,7 @@
 package moremobs;
 
 import moremobs.examples.*;
-import moremobs.examples.mounts.SpiderMountItem;
-import moremobs.examples.mounts.SpiderMountMob;
-import moremobs.examples.mounts.GrizzlyBearMountItem;
-import moremobs.examples.mounts.GrizzlyBearMountMob;
+import moremobs.examples.mounts.*;
 import necesse.engine.commands.CommandsManager;
 import necesse.engine.modLoader.annotations.ModEntry;
 import necesse.engine.registries.*;
@@ -21,13 +18,12 @@ import necesse.inventory.lootTable.lootItem.ChanceLootItem;
 public class MoreMobs {
 
     public void init() {
-        System.out.println("Hello world from my example mod!");
-
         // Register our tiles
         TileRegistry.registerTile("exampletile", new ExampleTile(), 1, true);
 
         // Register out objects
         ObjectRegistry.registerObject("exampleobject", new ExampleObject(), 2, true);
+        ObjectRegistry.registerObject("spidermountcobweb", new SpiderMountCobweb(), 2, true);
 
         // Register our items
         ItemRegistry.registerItem("exampleitem", new ExampleMaterialItem(), 10, true);
@@ -99,8 +95,8 @@ public class MoreMobs {
 
         // Add out example mob to default cave mobs.
         // Spawn tables use a ticket/weight system. In general, common mobs have about 100 tickets.
-        Biome.defaultCaveMobs
-                .add(100, "examplemob");
+        // Biome.defaultCaveMobs
+        //         .add(100, "examplemob");
 
         // Register our server chat command
         CommandsManager.registerServerCommand(new ExampleChatCommand());
