@@ -3,6 +3,8 @@ package moremobs;
 import moremobs.examples.*;
 import moremobs.examples.mounts.SpiderMountItem;
 import moremobs.examples.mounts.SpiderMountMob;
+import moremobs.examples.mounts.GrizzlyBearMountItem;
+import moremobs.examples.mounts.GrizzlyBearMountMob;
 import necesse.engine.commands.CommandsManager;
 import necesse.engine.modLoader.annotations.ModEntry;
 import necesse.engine.registries.*;
@@ -11,6 +13,9 @@ import necesse.inventory.recipe.Ingredient;
 import necesse.inventory.recipe.Recipe;
 import necesse.inventory.recipe.Recipes;
 import necesse.level.maps.biomes.Biome;
+import necesse.entity.mobs.friendly.GrizzlyBearMob;
+import necesse.inventory.lootTable.LootTable;
+import necesse.inventory.lootTable.lootItem.ChanceLootItem;
 
 @ModEntry
 public class MoreMobs {
@@ -33,6 +38,8 @@ public class MoreMobs {
         // Register mounts
         ItemRegistry.registerItem("spidermountitem", new SpiderMountItem(), 100, true);
         MobRegistry.registerMob("spidermountmob", SpiderMountMob.class, true);
+        ItemRegistry.registerItem("grizzlybearmountitem", new GrizzlyBearMountItem(), 100, true);
+        MobRegistry.registerMob("grizzlybearmountmob", GrizzlyBearMountMob.class, true);
 
 
         // Register our mob
@@ -55,6 +62,7 @@ public class MoreMobs {
 
         ExampleMob.texture = GameTexture.fromFile("mobs/examplemob");
         SpiderMountMob.texture = GameTexture.fromFile("mobs/spidermountmob");
+        GrizzlyBearMountMob.texture = GameTexture.fromFile("mobs/grizzlybearmountmob");
     }
 
     public void postInit() {
@@ -96,6 +104,10 @@ public class MoreMobs {
 
         // Register our server chat command
         CommandsManager.registerServerCommand(new ExampleChatCommand());
+
+        GrizzlyBearMob.lootTable.items.add(
+                new ChanceLootItem(1.0F, "grizzlybearmountitem")
+        );
     }
 
 }
