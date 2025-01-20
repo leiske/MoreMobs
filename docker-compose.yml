@@ -13,7 +13,7 @@ services:
     volumes:
       - .:/home/gradle/project
       - ./gradle:/home/gradle/.gradle
-      - ${GAME_PATH}:/home/gradle/Necesse
+      #- ${GAME_PATH}:/home/gradle/Necesse
       # Ensure your Necesse install is at /home/gradle/Necesse
       # The Makefile handles this for you by reading your .env
     working_dir: /home/gradle/project
