@@ -1,6 +1,8 @@
 package moremobs;
 
 import moremobs.examples.*;
+import moremobs.examples.mounts.SpiderMountItem;
+import moremobs.examples.mounts.SpiderMountMob;
 import necesse.engine.commands.CommandsManager;
 import necesse.engine.modLoader.annotations.ModEntry;
 import necesse.engine.registries.*;
@@ -28,6 +30,11 @@ public class MoreMobs {
         ItemRegistry.registerItem("icesword", new IceSwordItem(), 2000, true);
         ItemRegistry.registerItem("examplestaff", new ExampleProjectileWeapon(), 30, true);
 
+        // Register mounts
+        ItemRegistry.registerItem("spidermountitem", new SpiderMountItem(), 100, true);
+        MobRegistry.registerMob("spidermountmob", SpiderMountMob.class, true);
+
+
         // Register our mob
         MobRegistry.registerMob("examplemob", ExampleMob.class, true);
 
@@ -47,6 +54,7 @@ public class MoreMobs {
         // It will process your textures and save them again with a fixed alpha edge color
 
         ExampleMob.texture = GameTexture.fromFile("mobs/examplemob");
+        SpiderMountMob.texture = GameTexture.fromFile("mobs/spidermountmob");
     }
 
     public void postInit() {
