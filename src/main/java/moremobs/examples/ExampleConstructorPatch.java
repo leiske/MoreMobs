@@ -18,9 +18,9 @@ public class ExampleConstructorPatch {
 
     @Advice.OnMethodExit
     static void onExit(@Advice.This RabbitMob rabbitMob) {
-        rabbitMob.setSpeed(60);
+        // rabbitMob.setSpeed(60);
         // Debug message to know it's working
-        System.out.println("Exited RabbitMob constructor: " + rabbitMob.getStringID());
+        // System.out.println("Exited RabbitMob constructor: " + rabbitMob.getStringID());
     }
 
 }

@@ -32,14 +32,17 @@ import necesse.entity.mobs.summon.summonFollowingMob.mountFollowingMob.MountFoll
 
 
 public class SpiderMountMob extends MountFollowingMob {
-  private static final int[] frameOffsets = new int[] { 0, -8, -18, -30, -18, -8 };
   public static GameTexture texture;
+
+  private int width = 96;
+  private int height = 96;
 
   public SpiderMountMob() {
     super(50);
 
-    setSpeed(50.0F);
-    setFriction(2.0F);
+    setSpeed(100.0F);
+    setSwimSpeed(0.9F);
+    setFriction(5.0F);
 
     this.collision = new Rectangle(-10, -7, 20, 14);
     this.hitBox = new Rectangle(-12, -14, 24, 24);
@@ -56,37 +59,75 @@ public class SpiderMountMob extends MountFollowingMob {
     TextureDrawOptionsEnd front;
 
     int drawX = camera.getDrawX(x) - 48;
-    int drawY = camera.getDrawY(y) - 64;
+    int drawY = camera.getDrawY(y) - 48;
     int dir = getDir();
 
     GameLight light = level.getLightLevel(x / 32, y / 32);
     Point sprite = getAnimSprite(x, y, dir);
 
-    drawY += getBobbing(x, y);
+    drawY += getBobbing(x, y) * 3;
     drawY += getLevel().getTile(x / 32, y / 32).getMobSinkingAmount((Mob)this);
 
-    final TextureDrawOptionsEnd behind = texture.initDraw().sprite(sprite.x, sprite.y, 64, 96).light(light).pos(drawX, drawY);
+    final TextureDrawOptionsEnd behind = texture.initDraw().sprite(sprite.x, sprite.y, width, height).light(light).pos(drawX, drawY);
 
-    front = texture.initDraw().sprite(sprite.x, sprite.y, 64, 96).light(light).pos(drawX, drawY);
+    front = texture.initDraw().sprite(sprite.x, sprite.y, width, height).light(light).pos(drawX, drawY);
 
     list.add(new MobDrawable() {
           public void draw(TickManager tickManager) {
-            front.draw();
+            // behind.draw();
           }
           
           public void drawBehindRider(TickManager tickManager) {
-            behind.draw();
+            front.draw();
           }
         });
   }
   
   
   public int getRiderMaskYOffset() {
-    return -6;
+    return -4;
   }
   
   public int getRiderDrawYOffset() {
-    return 4;
+    return -4;
+  }
+
+  public MaskShaderOptions getRiderMaskOptions(int x, int y) {
+    GameTexture riderMask = getRiderMask();
+    Point spriteOffset = getSpriteOffset(getAnimSprite(x, y, getDir()));
+    if (riderMask != null) {
+      int maskXOffset = getRiderMaskXOffset();
+      int maskYOffset = getRiderMaskYOffset();
+
+      int drawXOffset = getRiderDrawXOffset();
+      int drawYOffset = getRiderDrawYOffset();
+
+      // 0 - up facing
+      // 1 - right facing
+      // 2 - down facing
+      // 3 - left facing
+      int dir = getDir();
+
+      if (dir == 1) // right
+        drawXOffset += 10;
+      if (dir == 3) // left
+        drawXOffset += -10;
+
+      if (dir == 0) // up
+        maskYOffset += 4;
+
+      System.out.println("Rider Mask: " + " x: " + maskXOffset + " y: " + maskYOffset + " Dir: " + dir);
+
+      return new MaskShaderOptions(
+        riderMask,
+        spriteOffset.x + drawXOffset,
+        spriteOffset.y + drawYOffset,
+        maskXOffset,
+        maskYOffset
+      );
+    }
+
+    return new MaskShaderOptions(spriteOffset.x, spriteOffset.y);
   }
 
   public Point getSpriteOffset(int spriteX, int spriteY) {
@@ -95,6 +136,30 @@ public class SpiderMountMob extends MountFollowingMob {
   
   public GameTexture getRiderMask() {
     return MobRegistry.Textures.mountmask;
+  }
+
+   protected void doMountedLogic() {
+    if (isServer())
+      return; 
+    int particleCount = 40;
+    for (int i = 0; i < particleCount; i++)
+      getLevel().entityManager.addParticle(this.x + 
+          (float)(GameRandom.globalRandom.nextGaussian() * 8.0D), this.y + 16.0F + 
+          (float)(GameRandom.globalRandom.nextGaussian() * 8.0D), Particle.GType.IMPORTANT_COSMETIC)
+        
+        .sprite(GameResources.mapleLeafParticles.sprite(0, 0, 32))
+        .lifeTime(750)
+        .fadesAlphaTime(100, 250)
+        .movesFriction(16.0F * (float)GameRandom.globalRandom.nextGaussian(), 5.0F * 
+          (float)GameRandom.globalRandom.nextGaussian(), 1.0F)
+        .sizeFades(14, 18)
+        .heightMoves(20.0F, 64.0F); 
+  }
+
+  @Override
+  public int getRockSpeed() {
+      // Change the speed at which this mobs animation plays
+      return 50;
   }
 }
 

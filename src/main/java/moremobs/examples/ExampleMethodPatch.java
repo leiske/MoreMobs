@@ -54,7 +54,7 @@ public class ExampleMethodPatch {
         // We return true to skip the original method's execution, since we override the returned loot table anyway.
         // This only happens if you add "skipOn = Advice.OnNonDefaultValue.class" in the OnMethodEnter annotation.
         // Naturally, you can also return false to not skip the original method.
-        return true;
+        return false;
     }
 
     @Advice.OnMethodExit

@@ -6,7 +6,7 @@ $(error GAME_PATH is not set, run "cp .env.dist .env" and edit the file)
 endif
 
 CONTAINER_NAME = necesse-mod-dev
-DEV_CONTAINER_COMPOSE = docker compose run -v $(GAME_PATH):/home/gradle/Necesse --remove-orphans --rm $(CONTAINER_NAME)
+DEV_CONTAINER_COMPOSE = docker compose run --remove-orphans -v $(GAME_PATH):/home/gradle/Necesse $(CONTAINER_NAME)
 
 DECOMPILER_VERSION = 1.6.6
 
@@ -39,6 +39,9 @@ task:
 clean:
 	@rm -rf build
 
+kill:
+	@docker compose down
+
 disable-debug-client:
 	@cp $(GAME_PATH)/Necesse.json $(GAME_PATH)/Necesse.json.bak
 	@cp RegularClientArgs.json $(GAME_PATH)/Necesse.json
@@ -50,12 +53,19 @@ enable-debug-client:
 	@cp $(GAME_PATH)/Necesse.json $(GAME_PATH)/Necesse.json.bak
 	@cp DebugClientArgs.json $(GAME_PATH)/Necesse.json
 
+kill-client:
+	@if tasklist.exe | grep Necesse.exe > /dev/null; then taskkill.exe /IM Necesse.exe /F; fi
+
 debug-client: enable-debug-client
+	@if tasklist.exe | grep Necesse.exe > /dev/null; then taskkill.exe /IM Necesse.exe /F; fi
 	@(cd $(GAME_PATH); ./jre/bin/javaw.exe -jar Necesse.jar)
 
 attach-debug:
 	@docker compose run --rm $(CONTAINER_NAME) jdb -attach $(HOST_IP):5005 -sourcepath /home/gradle/project/build/mod/moremobs
 
 hot-reload: build
-	#redefine moremobs.examples.mounts.SpiderMountMob /home/gradle/project/build/mod/moremobs/examples/mounts/SpiderMountMob.class
 	@./hotreload.sh $(HOST_IP)
+
+logs:
+	@test -f $(LOG_PATH)/latest-log.txt || echo "No logs found or LOG_PATH not set in .env"
+	tail -F $(LOG_PATH)/latest-log.txt

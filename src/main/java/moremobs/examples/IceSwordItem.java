@@ -32,25 +32,4 @@ public class IceSwordItem extends SwordToolItem {
         attackRange.setBaseValue(500);
         knockback.setBaseValue(500);
     }
-
-  public void hitMob(InventoryItem item, ToolItemMobAbilityEvent event, Level level, Mob target, Mob attacker) {
-      super.hitMob(item, event, level, target, attacker);
-      if (level.isServer() && target != null) {
-        BuffManager attackerBM = attacker.buffManager;
-        float thresholdMod = ((Float)attackerBM.getModifier(BuffModifiers.CRIT_CHANCE)).floatValue() + ((Float)attackerBM.getModifier(BuffModifiers.MELEE_CRIT_CHANCE)).floatValue();
-        float crystallizeMod = ((Float)attackerBM.getModifier(BuffModifiers.CRIT_DAMAGE)).floatValue() + ((Float)attackerBM.getModifier(BuffModifiers.MELEE_CRIT_CHANCE)).floatValue();
-        int stackThreshold = (int)GameMath.limit(10.0F - 7.0F * thresholdMod, 3.0F, 10.0F);
-        float crystallizeDamageMultiplier = GameMath.limit(crystallizeMod, 2.0F, stackThreshold);
-        Buff crystallizeBuff = BuffRegistry.Debuffs.CRYSTALLIZE_BUFF;
-        ActiveBuff ab = new ActiveBuff(crystallizeBuff, target, 10000, (Attacker)attacker);
-        target.buffManager.addBuff(ab, true);
-        if (target.buffManager.getBuff(crystallizeBuff).getStacks() >= stackThreshold) {
-          level.entityManager.addLevelEvent((LevelEvent)new CrystallizeShatterEvent(target, CrystallizeShatterEvent.ParticleType.AMETHYST));
-          target.buffManager.removeBuff(crystallizeBuff, true);
-          GameDamage finalDamage = getDamage(item).modDamage(crystallizeDamageMultiplier);
-          target.isServerHit(finalDamage, 0.0F, 0.0F, 0.0F, (Attacker)attacker);
-        } 
-      } 
-    }
-
 }
