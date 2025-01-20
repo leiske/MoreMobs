@@ -37,7 +37,7 @@ public class SpiderMountMob extends MountFollowingMob {
   private int width = 96;
   private int height = 96;
 
-  private float defaultSpeed = 200.0F;
+  private float defaultSpeed = 100.0F;
 
   public SpiderMountMob() {
     super(50);
