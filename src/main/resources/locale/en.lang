@@ -12,9 +12,11 @@ examplestaff=Example Staff
 icesword=Ice Sword
 spidermountitem=Wiggling Spider Leg
 grizzlybearmountitem=Grizzly Bear Paw
+coalore=Coal Ore
 
 [itemtooltip]
 examplestafftip=Shoots a homing, piercing projectile
+coaloretip=Surprisingly more efficient than logs!
 
 [mob]
 examplemob=Example Mob

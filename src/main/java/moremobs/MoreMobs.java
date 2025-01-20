@@ -11,6 +11,7 @@ import necesse.inventory.recipe.Recipe;
 import necesse.inventory.recipe.Recipes;
 import necesse.level.maps.biomes.Biome;
 import necesse.entity.mobs.friendly.GrizzlyBearMob;
+import necesse.inventory.item.matItem.MatItem;
 import necesse.inventory.lootTable.LootTable;
 import necesse.inventory.lootTable.lootItem.ChanceLootItem;
 
@@ -37,6 +38,12 @@ public class MoreMobs {
         ItemRegistry.registerItem("grizzlybearmountitem", new GrizzlyBearMountItem(), 100, true);
         MobRegistry.registerMob("grizzlybearmountmob", GrizzlyBearMountMob.class, true);
 
+        ItemRegistry.registerItem(
+          "coalore",
+          (new MatItem(500, new String[] { "anylog", "anyflammable" })).setItemCategory(new String[] { "materials", "ore" }),
+          2.0F,
+          true
+        );
 
         // Register our mob
         MobRegistry.registerMob("examplemob", ExampleMob.class, true);
