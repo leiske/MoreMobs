@@ -7,6 +7,7 @@ import java.util.stream.Stream;
 import necesse.engine.gameLoop.tickManager.TickManager;
 import necesse.engine.modifiers.ModifierValue;
 import necesse.engine.registries.MobRegistry;
+import necesse.engine.util.GameUtils;
 import necesse.engine.util.GameMath;
 import necesse.engine.util.GameRandom;
 import necesse.entity.mobs.MaskShaderOptions;
@@ -30,17 +31,18 @@ import necesse.level.maps.Level;
 import necesse.level.maps.light.GameLight;
 import necesse.entity.mobs.summon.summonFollowingMob.mountFollowingMob.MountFollowingMob;
 
-
 public class SpiderMountMob extends MountFollowingMob {
   public static GameTexture texture;
 
   private int width = 96;
   private int height = 96;
 
+  private float defaultSpeed = 200.0F;
+
   public SpiderMountMob() {
     super(50);
 
-    setSpeed(100.0F);
+    setSpeed(defaultSpeed);
     setSwimSpeed(0.9F);
     setFriction(5.0F);
 
@@ -65,24 +67,35 @@ public class SpiderMountMob extends MountFollowingMob {
     GameLight light = level.getLightLevel(x / 32, y / 32);
     Point sprite = getAnimSprite(x, y, dir);
 
-    drawY += getBobbing(x, y) * 3;
-    drawY += getLevel().getTile(x / 32, y / 32).getMobSinkingAmount((Mob)this);
+    int animationTime = 1000;
 
-    final TextureDrawOptionsEnd behind = texture.initDraw().sprite(sprite.x, sprite.y, width, height).light(light).pos(drawX, drawY);
+    long time = level.getTime() + (new GameRandom(getUniqueID())).nextInt(animationTime);
+
+    float bobbingFloat = GameUtils.getBobbing(time, animationTime);
+    
+    drawY += getLevel().getTile(x / 32, y / 32).getMobSinkingAmount((Mob)this);
+    drawY += (int)(bobbingFloat * 2);
 
     front = texture.initDraw().sprite(sprite.x, sprite.y, width, height).light(light).pos(drawX, drawY);
 
     list.add(new MobDrawable() {
-          public void draw(TickManager tickManager) {
-            // behind.draw();
-          }
-          
-          public void drawBehindRider(TickManager tickManager) {
-            front.draw();
-          }
-        });
+        public void draw(TickManager tickManager) { }
+        
+        public void drawBehindRider(TickManager tickManager) {
+          front.draw();
+        }
+    });
   }
-  
+
+  public Point getSpriteOffset(int spriteX, int spriteY) {
+    Point p = new Point(0, 0);
+    if (spriteX == 1 || spriteX == 2)
+      p.y = 2; 
+    p.x += getRiderDrawXOffset();
+    p.y += getRiderDrawYOffset();
+    return p;
+  }
+
   
   public int getRiderMaskYOffset() {
     return -4;
@@ -92,48 +105,50 @@ public class SpiderMountMob extends MountFollowingMob {
     return -4;
   }
 
+  public void serverTick() {
+    super.serverTick();
+    System.out.println("server tick");
+  }
+
   public MaskShaderOptions getRiderMaskOptions(int x, int y) {
     GameTexture riderMask = getRiderMask();
     Point spriteOffset = getSpriteOffset(getAnimSprite(x, y, getDir()));
-    if (riderMask != null) {
-      int maskXOffset = getRiderMaskXOffset();
-      int maskYOffset = getRiderMaskYOffset();
 
-      int drawXOffset = getRiderDrawXOffset();
-      int drawYOffset = getRiderDrawYOffset();
-
-      // 0 - up facing
-      // 1 - right facing
-      // 2 - down facing
-      // 3 - left facing
-      int dir = getDir();
-
-      if (dir == 1) // right
-        drawXOffset += 10;
-      if (dir == 3) // left
-        drawXOffset += -10;
-
-      if (dir == 0) // up
-        maskYOffset += 4;
-
-      System.out.println("Rider Mask: " + " x: " + maskXOffset + " y: " + maskYOffset + " Dir: " + dir);
-
-      return new MaskShaderOptions(
-        riderMask,
-        spriteOffset.x + drawXOffset,
-        spriteOffset.y + drawYOffset,
-        maskXOffset,
-        maskYOffset
-      );
+    if (riderMask == null) {
+      return new MaskShaderOptions(spriteOffset.x, spriteOffset.y);
     }
 
-    return new MaskShaderOptions(spriteOffset.x, spriteOffset.y);
+    int maskXOffset = getRiderMaskXOffset();
+    int maskYOffset = getRiderMaskYOffset();
+
+    int drawXOffset = getRiderDrawXOffset();
+    int drawYOffset = getRiderDrawYOffset();
+
+    // 0 - up facing
+    // 1 - right facing
+    // 2 - down facing
+    // 3 - left facing
+    int dir = getDir();
+
+    if (dir == 1) // right
+      drawXOffset += 10;
+    if (dir == 3) // left
+      drawXOffset += -10;
+
+    if (dir == 0) // up
+      maskYOffset += 4;
+
+    System.out.println("Rider Mask: " + " x: " + maskXOffset + " y: " + maskYOffset + " Dir: " + dir);
+
+    return new MaskShaderOptions(
+      riderMask,
+      spriteOffset.x + drawXOffset,
+      spriteOffset.y + drawYOffset,
+      maskXOffset,
+      maskYOffset
+    );
   }
 
-  public Point getSpriteOffset(int spriteX, int spriteY) {
-    return new Point(getRiderDrawXOffset(), getRiderDrawYOffset());
-  }
-  
   public GameTexture getRiderMask() {
     return MobRegistry.Textures.mountmask;
   }
@@ -141,6 +156,7 @@ public class SpiderMountMob extends MountFollowingMob {
    protected void doMountedLogic() {
     if (isServer())
       return; 
+
     int particleCount = 40;
     for (int i = 0; i < particleCount; i++)
       getLevel().entityManager.addParticle(this.x + 

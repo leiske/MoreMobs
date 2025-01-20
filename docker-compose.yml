@@ -3,12 +3,17 @@ services:
     image: gradle:7.3.0
     container_name: necesse-mod-dev
     user: 1000:1000
+    env_file:
+      - .env
     environment:
       - GRADLE_USER_HOME=/home/gradle/.gradle
       - GRADLE_OPTS="-Dorg.gradle.daemon=true -Dorg.gradle.daemon.idletimeout=360000"
+    ports:
+      - 5005:5005
     volumes:
       - .:/home/gradle/project
       - ./gradle:/home/gradle/.gradle
+      - ${GAME_PATH}:/home/gradle/Necesse
       # Ensure your Necesse install is at /home/gradle/Necesse
       # The Makefile handles this for you by reading your .env
     working_dir: /home/gradle/project

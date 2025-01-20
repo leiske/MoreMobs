@@ -6,7 +6,7 @@ $(error GAME_PATH is not set, run "cp .env.dist .env" and edit the file)
 endif
 
 CONTAINER_NAME = necesse-mod-dev
-DEV_CONTAINER_COMPOSE = docker compose run --remove-orphans -v $(GAME_PATH):/home/gradle/Necesse $(CONTAINER_NAME)
+DEV_CONTAINER_COMPOSE = docker compose run --rm --remove-orphans -v $(GAME_PATH):/home/gradle/Necesse $(CONTAINER_NAME)
 
 DECOMPILER_VERSION = 1.6.6
 
@@ -63,7 +63,8 @@ debug-client: enable-debug-client
 attach-debug:
 	@docker compose run --rm $(CONTAINER_NAME) jdb -attach $(HOST_IP):5005 -sourcepath /home/gradle/project/build/mod/moremobs
 
-hot-reload: build
+hot-reload:
+	@docker compose exec $(CONTAINER_NAME) ./gradlew buildModJar
 	@./hotreload.sh $(HOST_IP)
 
 logs:
