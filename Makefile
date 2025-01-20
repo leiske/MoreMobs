@@ -23,7 +23,7 @@ install-decompiler:
 	@(cd $(GAME_PATH); wget --quiet --no-clobber https://github.com/java-decompiler/jd-gui/releases/download/v$(DECOMPILER_VERSION)/jd-gui-$(DECOMPILER_VERSION).jar)
 
 decompiler: install-decompiler
-	@(cd $(GAME_PATH); ./jre/bin/java.exe -jar jd-gui-1.6.6.jar Necesse.jar &)
+	@(cd $(GAME_PATH); ./jre/bin/java.exe -jar jd-gui-$(DECOMPILER_VERSION).jar Necesse.jar &)
 
 build: clean
 	$(DEV_CONTAINER_COMPOSE) ./gradlew buildModJar
