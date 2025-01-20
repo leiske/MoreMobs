@@ -1,8 +1,7 @@
 package moremobs;
 
 import moremobs.examples.*;
-import moremobs.examples.mounts.SpiderMountItem;
-import moremobs.examples.mounts.SpiderMountMob;
+import moremobs.examples.mounts.*;
 import necesse.engine.commands.CommandsManager;
 import necesse.engine.modLoader.annotations.ModEntry;
 import necesse.engine.registries.*;
@@ -16,13 +15,12 @@ import necesse.level.maps.biomes.Biome;
 public class MoreMobs {
 
     public void init() {
-        System.out.println("Hello world from my example mod!");
-
         // Register our tiles
         TileRegistry.registerTile("exampletile", new ExampleTile(), 1, true);
 
         // Register out objects
         ObjectRegistry.registerObject("exampleobject", new ExampleObject(), 2, true);
+        ObjectRegistry.registerObject("spidermountcobweb", new SpiderMountCobweb(), 2, true);
 
         // Register our items
         ItemRegistry.registerItem("exampleitem", new ExampleMaterialItem(), 10, true);

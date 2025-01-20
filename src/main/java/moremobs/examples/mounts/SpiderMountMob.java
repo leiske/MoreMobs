@@ -4,9 +4,11 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.util.List;
 import java.util.stream.Stream;
+import necesse.engine.GlobalData;
 import necesse.engine.gameLoop.tickManager.TickManager;
 import necesse.engine.modifiers.ModifierValue;
 import necesse.engine.registries.MobRegistry;
+import necesse.engine.registries.ObjectRegistry;
 import necesse.engine.util.GameUtils;
 import necesse.engine.util.GameMath;
 import necesse.engine.util.GameRandom;
@@ -28,6 +30,7 @@ import necesse.gfx.drawOptions.texture.TextureDrawOptionsEnd;
 import necesse.gfx.drawables.OrderableDrawables;
 import necesse.gfx.gameTexture.GameTexture;
 import necesse.level.maps.Level;
+import necesse.level.gameObject.GameObject;
 import necesse.level.maps.light.GameLight;
 import necesse.entity.mobs.summon.summonFollowingMob.mountFollowingMob.MountFollowingMob;
 
@@ -37,7 +40,9 @@ public class SpiderMountMob extends MountFollowingMob {
   private int width = 96;
   private int height = 96;
 
-  private float defaultSpeed = 100.0F;
+  private float defaultSpeed = 70.0F;
+
+  public static double webGrowChance = GameMath.getAverageSuccessRuns(500.0D);
 
   public SpiderMountMob() {
     super(50);
@@ -105,9 +110,30 @@ public class SpiderMountMob extends MountFollowingMob {
     return -4;
   }
 
-  public void serverTick() {
-    super.serverTick();
-    System.out.println("server tick");
+  public void tickMovement(float delta) {
+    super.tickMovement(delta);
+
+    Level level = getLevel();
+
+    GameCamera camera = GlobalData.getCurrentState().getCamera();
+    int x = this.getTileX();
+    int y = this.getTileY();
+
+    if (!level.isServer())
+      return; 
+
+    if (GameRandom.globalRandom.getChance(webGrowChance)) {
+      GameObject cobweb = ObjectRegistry.getObject(ObjectRegistry.getObjectID("spidermountcobweb"));
+      String canPlace = cobweb.canPlace(level, x, y, 0, false);
+      System.out.println("Can place: " + canPlace);
+      if (canPlace == null || canPlace.equals("wrongtile")) {
+        System.out.println("Placing a " + cobweb.getDisplayName() + " at " + x + ", " + y);
+        cobweb.placeObject(level, x, y, 0, false);
+        System.out.println("placed " + cobweb.getDisplayName());
+        level.sendObjectUpdatePacket(x, y);
+        System.out.println("sent object update packet");
+      } 
+    } 
   }
 
   public MaskShaderOptions getRiderMaskOptions(int x, int y) {
@@ -137,8 +163,6 @@ public class SpiderMountMob extends MountFollowingMob {
 
     if (dir == 0) // up
       maskYOffset += 4;
-
-    System.out.println("Rider Mask: " + " x: " + maskXOffset + " y: " + maskYOffset + " Dir: " + dir);
 
     return new MaskShaderOptions(
       riderMask,
