@@ -3,7 +3,10 @@ package moremobs.examples;
 import necesse.engine.modLoader.annotations.ModMethodPatch;
 import necesse.inventory.lootTable.LootTable;
 import necesse.inventory.lootTable.lootItem.LootItem;
+import necesse.inventory.lootTable.LootItemInterface;
+import necesse.inventory.lootTable.lootItem.ChanceLootItem;
 import necesse.level.gameObject.SurfaceGrassObject;
+import necesse.entity.mobs.hostile.SwampCaveSpiderMob;
 import necesse.level.maps.Level;
 import net.bytebuddy.asm.Advice;
 
@@ -40,29 +43,14 @@ import net.bytebuddy.asm.Advice;
  *
  * "@Advice.Argument(n)" - The annotated parameter is mapped to the n argument passed into the target method.
  */
-@ModMethodPatch(target = SurfaceGrassObject.class, name = "getLootTable", arguments = {Level.class, int.class, int.class, int.class})
-public class ExampleMethodPatch {
-
-    /*
-        Other than printing debug messages, this is currently set up to override the loot table for surface grass.
-     */
-
-    @Advice.OnMethodEnter(skipOn = Advice.OnNonDefaultValue.class)
-    static boolean onEnter(@Advice.This SurfaceGrassObject grassObject, @Advice.Argument(0) Level level) {
-        // Debug message to know it's working
-        // System.out.println("Entered SurfaceGrassObject.getLootTable(level, layerID, x, y): " + grassObject.getStringID() + " on level " + level.getIdentifier());
-        // We return true to skip the original method's execution, since we override the returned loot table anyway.
-        // This only happens if you add "skipOn = Advice.OnNonDefaultValue.class" in the OnMethodEnter annotation.
-        // Naturally, you can also return false to not skip the original method.
-        return true;
-    }
+@ModMethodPatch(target = SwampCaveSpiderMob.class, name = "getLootTable", arguments = {})
+public class SpiderMountMethodPatch {
 
     @Advice.OnMethodExit
-    static void onExit(@Advice.This SurfaceGrassObject grassObject, @Advice.Argument(0) Level level, @Advice.Return(readOnly = false) LootTable lootTable) {
-        // Grass now drops between 1 and 2 coins instead
-        lootTable = new LootTable(LootItem.between("coin", 1, 2));
-        // Debug message to know it's working
-        // System.out.println("Exited SurfaceGrassObject.getLootTable(level, layerID, x, y): " + grassObject.getStringID() + " on level " + level.getIdentifier() + " with new return value: " + lootTable);
+    static void onExit(
+      @Advice.This SwampCaveSpiderMob spiderMob,
+      @Advice.Return(readOnly = false) LootTable lootTable
+    ) {
+        lootTable.items.add(new ChanceLootItem(0.01F, "spidermountitem"));
     }
-
 }

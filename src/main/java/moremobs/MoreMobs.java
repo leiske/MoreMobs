@@ -89,11 +89,11 @@ public class MoreMobs {
 
         // Add out example mob to default cave mobs.
         // Spawn tables use a ticket/weight system. In general, common mobs have about 100 tickets.
-        Biome.defaultCaveMobs
-                .add(100, "examplemob");
+        // Biome.defaultCaveMobs
+        //         .add(100, "examplemob");
 
         // Register our server chat command
-        CommandsManager.registerServerCommand(new ExampleChatCommand());
+        // CommandsManager.registerServerCommand(new ExampleChatCommand());
     }
 
 }

@@ -59,20 +59,35 @@ public class SpiderMountMob extends MountFollowingMob {
     this.swimMaskOffset = -8;
     this.swimSinkOffset = 0;
   }
+
+  public void init() {
+    super.init();
+    this.ai = new BehaviourTreeAI((Mob)this, (AINode)new PlayerFollowerAINode(480, 64));
+  }
   
-  public void addDrawables(List<MobDrawable> list, OrderableDrawables tileList, OrderableDrawables topList, Level level, int x, int y, TickManager tickManager, GameCamera camera, PlayerMob perspective) {
+  public void addDrawables(
+    List<MobDrawable> list,
+    OrderableDrawables tileList,
+    OrderableDrawables topList,
+    Level level,
+    int x,
+    int y,
+    TickManager tickManager,
+    GameCamera camera,
+    PlayerMob perspective
+  ) {
     super.addDrawables(list, tileList, topList, level, x, y, tickManager, camera, perspective);
 
     TextureDrawOptionsEnd front;
 
-    int drawX = camera.getDrawX(x) - 48;
-    int drawY = camera.getDrawY(y) - 48;
+    int drawX = camera.getDrawX(x) - width/2;
+    int drawY = camera.getDrawY(y) - height/2;
     int dir = getDir();
 
     GameLight light = level.getLightLevel(x / 32, y / 32);
     Point sprite = getAnimSprite(x, y, dir);
 
-    int animationTime = 1000;
+    int animationTime = 1500;
 
     long time = level.getTime() + (new GameRandom(getUniqueID())).nextInt(animationTime);
 
@@ -125,13 +140,9 @@ public class SpiderMountMob extends MountFollowingMob {
     if (GameRandom.globalRandom.getChance(webGrowChance)) {
       GameObject cobweb = ObjectRegistry.getObject(ObjectRegistry.getObjectID("spidermountcobweb"));
       String canPlace = cobweb.canPlace(level, x, y, 0, false);
-      System.out.println("Can place: " + canPlace);
-      if (canPlace == null || canPlace.equals("wrongtile")) {
-        System.out.println("Placing a " + cobweb.getDisplayName() + " at " + x + ", " + y);
+      if (canPlace == null) {
         cobweb.placeObject(level, x, y, 0, false);
-        System.out.println("placed " + cobweb.getDisplayName());
         level.sendObjectUpdatePacket(x, y);
-        System.out.println("sent object update packet");
       } 
     } 
   }
@@ -183,17 +194,21 @@ public class SpiderMountMob extends MountFollowingMob {
 
     int particleCount = 40;
     for (int i = 0; i < particleCount; i++)
-      getLevel().entityManager.addParticle(this.x + 
-          (float)(GameRandom.globalRandom.nextGaussian() * 8.0D), this.y + 16.0F + 
-          (float)(GameRandom.globalRandom.nextGaussian() * 8.0D), Particle.GType.IMPORTANT_COSMETIC)
-        
-        .sprite(GameResources.mapleLeafParticles.sprite(0, 0, 32))
-        .lifeTime(750)
-        .fadesAlphaTime(100, 250)
-        .movesFriction(16.0F * (float)GameRandom.globalRandom.nextGaussian(), 5.0F * 
-          (float)GameRandom.globalRandom.nextGaussian(), 1.0F)
-        .sizeFades(14, 18)
-        .heightMoves(20.0F, 64.0F); 
+      getLevel().entityManager.addParticle(
+        this.x + (float)(GameRandom.globalRandom.nextGaussian() * 16.0D),
+        this.y + 16.0F + (float)(GameRandom.globalRandom.nextGaussian() * 16.0D),
+        Particle.GType.IMPORTANT_COSMETIC
+      )
+      .sprite(GameResources.mapleLeafParticles.sprite(0, 0, 32))
+      .lifeTime(750)
+      .fadesAlphaTime(100, 250)
+      .movesFriction(
+        16.0F * (float)GameRandom.globalRandom.nextGaussian(),
+        5.0F * (float)GameRandom.globalRandom.nextGaussian(),
+        1.0F
+      )
+      .sizeFades(14, 18)
+      .heightMoves(20.0F, 64.0F); 
   }
 
   @Override
