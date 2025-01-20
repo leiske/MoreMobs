@@ -159,3 +159,14 @@ task buildModJar(type: Jar) {
     archiveName "${jarName}.jar"
     destinationDir file(buildLocation)
 }
+
+
+task preAntialiasTextures(type: JavaExec) {
+    group "necesse"
+    description "Updates textures to be pre-antialiased"
+
+    classpath = files(gameDirectory + "/Necesse.jar")
+
+    main "PreAntialiasTextures"
+    args "-folders", "${sourceSets.main.resources.srcDirs.stream().map {file -> file.path}.toArray().join(";")}"
+}

@@ -79,3 +79,6 @@ start-dev-container:
 logs:
 	@test -f $(LOG_PATH)/latest-log.txt || echo "No logs found or LOG_PATH not set in .env"
 	tail -F $(LOG_PATH)/latest-log.txt
+
+antialias:
+	$(DEV_CONTAINER_COMPOSE) ./gradlew preAntialiasTextures
