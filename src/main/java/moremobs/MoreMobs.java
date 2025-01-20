@@ -25,6 +25,7 @@ public class MoreMobs {
         // Register our items
         ItemRegistry.registerItem("exampleitem", new ExampleMaterialItem(), 10, true);
         ItemRegistry.registerItem("examplesword", new ExampleSwordItem(), 20, true);
+        ItemRegistry.registerItem("icesword", new IceSwordItem(), 2000, true);
         ItemRegistry.registerItem("examplestaff", new ExampleProjectileWeapon(), 30, true);
 
         // Register our mob
