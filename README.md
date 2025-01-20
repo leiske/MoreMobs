@@ -16,9 +16,15 @@ Run `make build` to build the mod and copy to your mods folder
 
 Run `make client` to start the game. This is handy because we can control the jvm arguments.
 
+# Debugging and "hot reload"
+
+You can update a methods body and run `make hot-reload` to update the class without restarting the game.
+
+This requires you to launch the game with `make debug-client`. Optionally you can open a debugger shell with `make attach-debug`.
+
 # Decompiling
 
-Run `make decompile` to install `jd-gui` in your Necesse game path and then run it against the game jar
+Run `make decompiler` to install `jd-gui` in your Necesse game path and then run it against the game jar
 
 To export these as raw files you can follow:
 1. Help -> Preferences
