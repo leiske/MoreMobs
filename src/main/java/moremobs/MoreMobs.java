@@ -2,6 +2,7 @@ package moremobs;
 
 import moremobs.examples.*;
 import moremobs.examples.mounts.*;
+import moremobs.examples.chests.*;
 import necesse.engine.commands.CommandsManager;
 import necesse.engine.modLoader.annotations.ModEntry;
 import necesse.engine.registries.*;
@@ -13,6 +14,7 @@ import necesse.level.maps.biomes.Biome;
 import necesse.entity.mobs.friendly.GrizzlyBearMob;
 import necesse.inventory.lootTable.LootTable;
 import necesse.inventory.lootTable.lootItem.ChanceLootItem;
+import java.awt.Color;
 
 @ModEntry
 public class MoreMobs {
@@ -48,6 +50,10 @@ public class MoreMobs {
         BuffRegistry.registerBuff("examplebuff", new ExampleBuff());
 
         PacketRegistry.registerPacket(ExamplePacket.class);
+
+        for (MoreChestsChest chest : MoreChestsChest.Chests) {
+            chest.registerObject();
+        }
     }
 
     public void initResources() {
@@ -92,6 +98,11 @@ public class MoreMobs {
                         new Ingredient("goldbar", 10)
                 }
         ).showAfter("exampleitem")); // Show the recipe after example item recipe
+
+        for (MoreChestsChest chest : MoreChestsChest.Chests) {
+            System.out.println("Registering chest recipe: " + chest.chestTexture);
+            chest.registerRecipe();
+        }
 
         // Add out example mob to default cave mobs.
         // Spawn tables use a ticket/weight system. In general, common mobs have about 100 tickets.
